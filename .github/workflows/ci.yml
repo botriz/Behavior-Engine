@@ -1,9 +1,21 @@
-name: Behavior Engine safety checks
+name: Behavior Engine checks
+
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+      - "feat/**"
   pull_request:
-    branches: [main]
+    branches:
+      - "**"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: behavior-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -12,4 +24,5 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+      - run: node --check behavior-engine.js
       - run: npm test
